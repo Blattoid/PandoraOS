@@ -8,17 +8,50 @@ namespace Pandora
     {
         protected override void BeforeRun()
         {
-            Console.WriteLine("Cosmos booted successfully. Type a line of text to get it echoed back.");
+            Console.WriteLine("PandoraOS booted successfully.");
         }
 
         protected override void Run()
         {
             for (; ; )
             {
-                Console.Write("Enter text: ");
-                string input = Console.ReadLine();
-                Console.WriteLine("You entered: "+input);
+                //read user command
+                Console.Write(">"); //readline
+                string[] input = Console.ReadLine().Split(" "); //split by spaces
+                string command = input[0].ToLower(); //grab lowercase of command
+
+                switch (command)
+                {
+                    case "help":
+                        foreach (string line in new string[]
+                            {
+                                "help",
+                                "shutdown"
+                            }
+                        ) Console.WriteLine(line);
+                        break;
+                    case "shutdown":
+                        Sys.Power.Shutdown();
+                        break;
+                    default:
+                        Error("Unknown command.");
+                        break;
+                }
             }
+        }
+
+        //message printing
+        void Error(string errormesg)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errormesg);
+            Console.ResetColor();
+        }
+        void Success(string errormesg)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(errormesg);
+            Console.ResetColor();
         }
     }
 }
