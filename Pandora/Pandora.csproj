@@ -76,6 +76,32 @@
         <ISO_PxeInterface>192.168.0.8</ISO_PxeInterface>
         <ISO_EnableGDB>False</ISO_EnableGDB>
         <ISO_StartCosmosGDB>False</ISO_StartCosmosGDB>
+        <PXE_StackCorruptionDetectionEnabled>True</PXE_StackCorruptionDetectionEnabled>
+        <PXE_StackCorruptionDetectionLevel>MethodFooters</PXE_StackCorruptionDetectionLevel>
+        <PXE_Description>Creates a PXE setup and hosts a DCHP and TFTP server to deploy directly to physical hardware. Allows debugging with a serial cable.</PXE_Description>
+        <PXE_Deployment>PXE</PXE_Deployment>
+        <PXE_Launch>None</PXE_Launch>
+        <PXE_DebugEnabled>True</PXE_DebugEnabled>
+        <PXE_DebugMode>Source</PXE_DebugMode>
+        <PXE_IgnoreDebugStubAttribute>False</PXE_IgnoreDebugStubAttribute>
+        <PXE_CosmosDebugPort>Serial: COM1</PXE_CosmosDebugPort>
+        <PXE_VisualStudioDebugPort>Pipe: CosmosSerial</PXE_VisualStudioDebugPort>
+        <PXE_PxeInterface>192.168.0.8</PXE_PxeInterface>
+        <PXE_EnableGDB>False</PXE_EnableGDB>
+        <PXE_StartCosmosGDB>False</PXE_StartCosmosGDB>
+        <USB_StackCorruptionDetectionEnabled>True</USB_StackCorruptionDetectionEnabled>
+        <USB_StackCorruptionDetectionLevel>MethodFooters</USB_StackCorruptionDetectionLevel>
+        <USB_Description>Makes a USB device such as a flash drive or external hard disk bootable.</USB_Description>
+        <USB_Deployment>USB</USB_Deployment>
+        <USB_Launch>None</USB_Launch>
+        <USB_DebugEnabled>False</USB_DebugEnabled>
+        <USB_DebugMode>Source</USB_DebugMode>
+        <USB_IgnoreDebugStubAttribute>False</USB_IgnoreDebugStubAttribute>
+        <USB_CosmosDebugPort>Serial: COM1</USB_CosmosDebugPort>
+        <USB_VisualStudioDebugPort>Pipe: CosmosSerial</USB_VisualStudioDebugPort>
+        <USB_PxeInterface>192.168.0.8</USB_PxeInterface>
+        <USB_EnableGDB>False</USB_EnableGDB>
+        <USB_StartCosmosGDB>False</USB_StartCosmosGDB>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -94,6 +120,15 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
+      <Optimize>true</Optimize>
+      <DefineConstants>TRACE</DefineConstants>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <DebugEnabled>True</DebugEnabled>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+      <DebugEnabled>False</DebugEnabled>
+      <DefineConstants />
     </PropertyGroup>
 
     <ItemGroup>
