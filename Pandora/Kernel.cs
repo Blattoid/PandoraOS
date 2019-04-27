@@ -7,6 +7,8 @@ namespace Pandora
     public class Kernel : Sys.Kernel
     {
         public double SYS_VERSION = 0.2;
+        MissingFunctions functions = new MissingFunctions();
+
         protected override void BeforeRun()
         {
             Sys.PCSpeaker.Beep();
@@ -51,9 +53,6 @@ namespace Pandora
                         ScrollWithPauses(Directory.GetDirectories(cd), "<DIR>  ", ConsoleColor.Magenta);
                         ScrollWithPauses(Directory.GetFiles(cd), "<FILE> ", ConsoleColor.Green);
                         Console.ResetColor();
-                        break;
-                    case ".":
-                        Success(ConvertToInt(input[1]).ToString());
                         break;
                     case "reboot":
                         Sys.Power.Reboot();
@@ -102,31 +101,6 @@ namespace Pandora
                 line++;
             }
             Console.ResetColor();
-        }
-
-        //Convert.ToInt32 doesn't work, so I have to implement it myself in such a way that it does work. It will not be efficient.
-        int ConvertToInt(string input)
-        {
-            Int32 output = 0 ;
-            int multiplier = 1;
-            for (int i = input.Length - 1; i >= 0; i -= 1)
-            {
-                int x=0;
-                string y = input[i].ToString();
-                if (y == "0") x = 0;
-                if (y == "1") x = 1;
-                if (y == "2") x = 2;
-                if (y == "3") x = 3;
-                if (y == "4") x = 4;
-                if (y == "5") x = 5;
-                if (y == "6") x = 6;
-                if (y == "7") x = 7;
-                if (y == "8") x = 8;
-                if (y == "9") x = 9;
-                output += x * multiplier;
-                multiplier *= 10;
-            }
-            return output;
         }
     }
 }
