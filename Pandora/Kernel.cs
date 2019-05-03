@@ -188,12 +188,47 @@ namespace Pandora
                                 Success(string.Format("Set filename to '{0}'", filename));
                             }
                         }
+                        else if (command == "load")
+                        {
+                            //check if a filename was specified.
+                            if (input.Length < 2)
+                            {
+                                Error("No filename was specified.");
+                                continue;
+                            }
+
+                            //check if we are about to overwrite any unsaved work
+                            if (filecontent.Count > 0)
+                            {
+                                Console.Write("You are about to discard your unsaved work.\nProceed? y/N ");
+                                Console.ResetColor();
+
+                                //read user input
+                                if (!(Console.ReadKey().Key == ConsoleKey.Y))
+                                {
+                                    Console.WriteLine("\nAborted load.");
+                                    continue;
+                                }
+                            }
+
+                            if (File.Exists(input[1]))
+                            {
+                                Console.WriteLine("Loading file...");
+                                filecontent.Clear(); //clear any content that might already be in the buffer.
+                                foreach (string line in File.ReadAllLines(input[1])) filecontent.Add(line); //add all the lines
+                                Success(string.Format("Loaded {0} lines!", filecontent.Count));
+                            }
+                            else
+                            {
+                                Error("File not found.");
+                            }
+                        }
 
                         else if (command == "line")
                         {
                             //idiot-proofing
                             //parameter count checks
-                            if (input.Length < 3)
+                            if (input.Length < 2)
                             {
                                 Error("Insufficient parameters.");
                                 continue;
