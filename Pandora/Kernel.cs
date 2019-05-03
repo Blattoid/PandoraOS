@@ -6,14 +6,20 @@ namespace Pandora
 {
     public class Kernel : Sys.Kernel
     {
-        public double SYS_VERSION = 0.31;
+        public double SYS_VERSION = 0.32;
         MissingFunctions functions = new MissingFunctions();
         public Sys.FileSystem.CosmosVFS filesys;
 
         protected override void BeforeRun()
-        {
-            Sys.PCSpeaker.Beep();
-            Success("Kernel execution started.");
+        { 
+            //at this point, our code is executing. print a message to inform the user of this.
+            Success("Kernel execution started."); 
+
+            //startup beep tune :)
+            Sys.PCSpeaker.Beep(600,200);
+            Sys.PCSpeaker.Beep(800,200);
+            Sys.PCSpeaker.Beep(1000,200);
+
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Screen res is " + Console.WindowWidth + "x" + Console.WindowHeight + ".");
             Console.ResetColor();
@@ -23,7 +29,6 @@ namespace Pandora
 
         protected override void Run()
         {
-            Console.WriteLine(Console.ReadLine().Length+" characters");
             try
             {
                 //read user command
@@ -35,14 +40,14 @@ namespace Pandora
                 {
                     foreach (string line in new string[]
                         {
-                                "help",
+                                "help\t\tDisplays this help",
                                 "",
-                                "init_vfs",
-                                "list",
-                                "memopad",
+                                "init_vfs\t\tInitialises the Virtual Filesystem Manager.",
+                                "list\t\tLists the files in the current directory.",
+                                "memopad\t\tAllows you to write anywhere on the screen.",
                                 "",
-                                "reboot",
-                                "shutdown"
+                                "reboot\t\tRestarts the system.",
+                                "shutdown\t\tTurns the system off."
                         }
                     ) Console.WriteLine(line);
                 }
