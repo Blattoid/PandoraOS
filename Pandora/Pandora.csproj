@@ -16,7 +16,7 @@
         <VMware_Description>Use VMware Player or Workstation to deploy and debug.</VMware_Description>
         <VMware_Deployment>ISO</VMware_Deployment>
         <VMware_Launch>VMware</VMware_Launch>
-        <VMware_DebugEnabled>True</VMware_DebugEnabled>
+        <VMware_DebugEnabled>False</VMware_DebugEnabled>
         <VMware_DebugMode>Source</VMware_DebugMode>
         <VMware_IgnoreDebugStubAttribute>False</VMware_IgnoreDebugStubAttribute>
         <VMware_CosmosDebugPort>Serial: COM1</VMware_CosmosDebugPort>
@@ -102,6 +102,8 @@
         <USB_PxeInterface>192.168.0.8</USB_PxeInterface>
         <USB_EnableGDB>False</USB_EnableGDB>
         <USB_StartCosmosGDB>False</USB_StartCosmosGDB>
+        <Configurations>Debug</Configurations>
+        <Platforms>AnyCPU;x86</Platforms>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -121,14 +123,17 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
       <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
       <Optimize>true</Optimize>
-      <DefineConstants>TRACE</DefineConstants>
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
       <PlatformTarget>AnyCPU</PlatformTarget>
       <DebugEnabled>True</DebugEnabled>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-      <DebugEnabled>False</DebugEnabled>
-      <DefineConstants />
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+      <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
+      <Optimize>true</Optimize>
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
+      <PlatformTarget>AnyCPU</PlatformTarget>
+      <DebugEnabled>True</DebugEnabled>
     </PropertyGroup>
 
     <ItemGroup>

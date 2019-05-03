@@ -17,7 +17,7 @@ namespace Pandora
             //at this point, our code is executing. print a message to inform the user of this.
             Success("Kernel execution started.");
 
-            //startup beep tune :)
+            //cute startup beep tune :)
             Sys.PCSpeaker.Beep(600, 200);
             Sys.PCSpeaker.Beep(800, 200);
             Sys.PCSpeaker.Beep(1000, 200);
@@ -26,7 +26,7 @@ namespace Pandora
             Console.WriteLine("Screen res is " + Console.WindowWidth + "x" + Console.WindowHeight + ".");
             Console.ResetColor();
 
-            Success(string.Format("-=PandoraOS V{0} booted successfully=-",SYS_VERSION));
+            Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
         }
 
         protected override void Run()
@@ -40,19 +40,19 @@ namespace Pandora
 
                 if (command == "help")
                 {
-                    foreach (string line in new string[]
+                    foreach (string[] line in new string[][]
                         {
-                                "help\t\tDisplays this help",
-                                "memopad\t\tAllows you to write anywhere on the screen.",
-                                "",
-                                "init_vfs\t\tInitialises the Virtual Filesystem Manager.",
-                                "list\t\tLists the files in the current directory.",
-                                "edit\t\tAllows rudimentary file editing.",
-                                "",
-                                "reboot\t\tRestarts the system.",
-                                "shutdown\t\tTurns the system off."
+                                new string[] {"help","Displays this help" },
+                                new string[] {"memopad","Allows you to write anywhere on the screen." },
+                                new string[] {""},
+                                new string[] { "init_vfs", "Initialises the Virtual Filesystem Manager." },
+                                new string[] { "list", "Lists the files in the current directory." },
+                                new string[] { "edit", "Allows rudimentary file editing." },
+                                new string[] {""},
+                                new string[] {"reboot","Restarts the system." },
+                                new string[] {"shutdown","Turns the system off." }
                         }
-                    ) Console.WriteLine(line);
+                    ) OutputHelpText(line);
                 }
                 else if (command == "memopad")
                 {
@@ -121,16 +121,19 @@ namespace Pandora
                         return;
                     }
 
+                    //display warning about possible data corruption
                     Error("-=!!WARNING!!=-\nThe CosmosOS FAT driver is still in experimental stages.\nPROCEEDING MAY CAUSE A LOSS OF DATA!");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Initialise anyway? y/N ");
+                    //reset colour
+                    Console.ResetColor();
+
+                    //read user input
                     if (!(Console.ReadKey().Key == ConsoleKey.Y))
                     {
                         Console.WriteLine("\nAborted.");
                         return;
                     }
-                    //reset colour
-                    Console.ResetColor();
 
                     filesys = new Sys.FileSystem.CosmosVFS();
                     Sys.FileSystem.VFS.VFSManager.RegisterVFS(filesys);
@@ -163,19 +166,19 @@ namespace Pandora
 
                         if (command == "help")
                         {
-                            foreach (string line in new string[]
+                            foreach (string[] line in new string[][]
                                 {
-                                    "help\t\tDisplays this help.",
-                                    "set_filename <filename>\t\tSets the filename to write to.",
-                                    "load <filename>\t\tLoads a file from disk.",
-
-                                    "line <line no>\t\tSets the text on a given line to some text.",
-                                    "list [line no]\t\tLists the contents of either the whole file or a specific line.",
-
-                                    "save\t\tSaves the file to disk and exits.",
-                                    "discard\t\tExit without saving."
+                                    new string[] {"help","Displays this help." },
+                                    new string[] {"set_filename <filename>","Sets the filename to write to." },
+                                    new string[] {"load <filename>","Loads a file from disk." },
+                                    new string[] {"" },
+                                    new string[] {"line <line no>","Sets the text on a given line to some text." },
+                                    new string[] {"list [line no]","Lists the contents of either the whole file or a specific line." },
+                                    new string[] {"" },
+                                    new string[] {"save","Saves the file to disk and exits." },
+                                    new string[] {"discard","Exit without saving." }
                                 }
-                            ) Console.WriteLine(line);
+                            ) OutputHelpText(line);
                         }
                         else if (command == "set_filename")
                         {
@@ -197,9 +200,8 @@ namespace Pandora
                             }
                             else if (input.Length > 3) Warning("Excessive parameters, proceeding anyway.");
                             //checks the line number is actually an integer
-                            int linenumber;
-                            if (int.TryParse(input[1], out linenumber))
-                            { 
+                            if (int.TryParse(input[1], out int linenumber))
+                            {
                                 //it is an integer, is it less than 1?
                                 if (linenumber < 1)
                                 {
@@ -219,7 +221,7 @@ namespace Pandora
 
                             //Get the new content for the line 
                             Console.Write("? ");
-                            filecontent[linenumber-1] = Console.ReadLine();
+                            filecontent[linenumber - 1] = Console.ReadLine();
 
                         }
                         else if (command == "list")
@@ -228,8 +230,7 @@ namespace Pandora
                             {
                                 //idiot-proofing
                                 //checks the line number is actually an integer
-                                int linenumber;
-                                if (int.TryParse(input[1], out linenumber))
+                                if (int.TryParse(input[1], out int linenumber))
                                 {
                                     //it is an integer, is it less than 1?
                                     if (linenumber < 1)
@@ -314,6 +315,21 @@ namespace Pandora
                 line++;
             }
             Console.ResetColor();
+        }
+
+        //Properly outputs help text
+        void OutputHelpText(string[] commandinfo)
+        {
+            Console.Write(commandinfo[0]); //output command name
+
+            //output optional command description and spacing
+            if (commandinfo.Length > 1)
+            {
+                Console.Write(functions.EnumerableRepeat(" ", 20 - commandinfo[0].Length)); //20 is the length of the padding.
+                Console.Write(commandinfo[1]);
+            }
+
+            Console.WriteLine(); //newline regardless of if there was a command description or not
         }
     }
 }

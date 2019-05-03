@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Pandora
 {
@@ -51,6 +49,19 @@ namespace Pandora
                 }
                 output += x * multiplier;
                 multiplier *= 10;
+            }
+            return output;
+        }
+
+        //Because System.Linq isn't supported, Enumerable.Repeat also doesn't exist.
+        public string EnumerableRepeat(string repeatthis, int repeatcount)
+        {
+            string output = "";
+            int i = 0;
+            while (i < repeatcount)
+            {
+                output += repeatthis;
+                i++;
             }
             return output;
         }
