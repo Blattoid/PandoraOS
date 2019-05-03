@@ -115,6 +115,12 @@ namespace Pandora
 
                 else if (command == "init_vfs")
                 {
+                    if (IsVFSInit)
+                    {
+                        Error("VFS is already initialised. Reboot if you want to unload it.");
+                        return;
+                    }
+
                     Error("-=!!WARNING!!=-\nThe CosmosOS FAT driver is still in experimental stages.\nPROCEEDING MAY CAUSE A LOSS OF DATA!");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.Write("Initialise anyway? y/N ");
@@ -123,10 +129,13 @@ namespace Pandora
                         Console.WriteLine("\nAborted.");
                         return;
                     }
+                    //reset colour
+                    Console.ResetColor();
 
                     filesys = new Sys.FileSystem.CosmosVFS();
                     Sys.FileSystem.VFS.VFSManager.RegisterVFS(filesys);
                     Success("Initialised VFS.");
+                    IsVFSInit = true;
                 }
                 else if (command == "list")
                 {
@@ -143,7 +152,7 @@ namespace Pandora
                     if (!IsVFSInit) { Error("VFS not initialised!"); return; } //refuse to proceed if the VFS has not been initialised
 
                     string filename;
-                    List<string> fileobj = new List<string>();
+                    List<string> filecontent = new List<string>();
                     Console.WriteLine("-=File Editor=-");
                     for (; ; )
                     {
@@ -158,8 +167,9 @@ namespace Pandora
                                 {
                                     "help\t\tDisplays this help.",
                                     "set_filename <filename>\t\tSets the filename to write to.",
+                                    "load <filename>\t\tLoads a file from disk.",
 
-                                    "line <line no> <data>\t\tSets the text on a given line to some text.",
+                                    "line <line no>\t\tSets the text on a given line to some text.",
                                     "list [line no]\t\tLists the contents of either the whole file or a specific line.",
 
                                     "save\t\tSaves the file to disk and exits.",
@@ -175,6 +185,83 @@ namespace Pandora
                                 Success(string.Format("Set filename to '{0}'", filename));
                             }
                         }
+
+                        else if (command == "line")
+                        {
+                            //idiot-proofing
+                            //parameter count checks
+                            if (input.Length < 3)
+                            {
+                                Error("Insufficient parameters.");
+                                continue;
+                            }
+                            else if (input.Length > 3) Warning("Excessive parameters, proceeding anyway.");
+                            //checks the line number is actually an integer
+                            int linenumber;
+                            if (int.TryParse(input[1], out linenumber))
+                            { 
+                                //it is an integer, is it less than 1?
+                                if (linenumber < 1)
+                                {
+                                    Error("Line number is less than 1.");
+                                    continue;
+                                }
+                            }
+                            else
+                            {
+                                //it is not an integer
+                                Error("Invalid line number.");
+                                continue;
+                            }
+
+                            //generate extra blank lines in the array if we need to.
+                            while (filecontent.Count < linenumber) filecontent.Add("");
+
+                            //Get the new content for the line 
+                            Console.Write("? ");
+                            filecontent[linenumber-1] = Console.ReadLine();
+
+                        }
+                        else if (command == "list")
+                        {
+                            if (input.Length > 1)
+                            {
+                                //idiot-proofing
+                                //checks the line number is actually an integer
+                                int linenumber;
+                                if (int.TryParse(input[1], out linenumber))
+                                {
+                                    //it is an integer, is it less than 1?
+                                    if (linenumber < 1)
+                                    {
+                                        Error("Line number is less than 1.");
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    //it is not an integer
+                                    Error("Invalid line number.");
+                                    continue;
+                                }
+
+                                if (linenumber > filecontent.Count)
+                                {
+                                    //the specified line exceeds the line count of the file
+                                    Error("Out of range.");
+                                    continue;
+                                }
+
+                                //output the line they requested.
+                                Console.WriteLine(filecontent[linenumber - 1]);
+                            }
+                            else
+                            {
+                                //Simply output every single line, lmao
+                                foreach (string line in filecontent) Console.WriteLine(line);
+                            }
+                        }
+
                         else if (command == "discard") break; //exit the loop
                         else Error("Unknown command. Type 'help' for a list of editor commands.");
                     }
@@ -187,17 +274,23 @@ namespace Pandora
             catch (Exception err) { Error(err.Message); }
         }
 
-        //message printing
-        void Error(string errormesg)
+        //colour-coded message printing
+        void Error(string mesg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(errormesg);
+            Console.WriteLine(mesg);
             Console.ResetColor();
         }
-        void Success(string errormesg)
+        void Warning(string mesg)
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine(mesg);
+            Console.ResetColor();
+        }
+        void Success(string mesg)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(errormesg);
+            Console.WriteLine(mesg);
             Console.ResetColor();
         }
 
