@@ -115,6 +115,15 @@ namespace Pandora
 
                 else if (command == "init_vfs")
                 {
+                    Error("-=!!WARNING!!=-\nThe CosmosOS FAT driver is still in experimental stages.\nPROCEEDING MAY CAUSE A LOSS OF DATA!");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("Initialise anyway? y/N ");
+                    if (!(Console.ReadKey().Key == ConsoleKey.Y))
+                    {
+                        Console.WriteLine("\nAborted.");
+                        return;
+                    }
+
                     filesys = new Sys.FileSystem.CosmosVFS();
                     Sys.FileSystem.VFS.VFSManager.RegisterVFS(filesys);
                     Success("Initialised VFS.");
@@ -135,7 +144,7 @@ namespace Pandora
 
                     string filename;
                     List<string> fileobj = new List<string>();
-                    Console.WriteLine("-=File Editor V1=-");
+                    Console.WriteLine("-=File Editor=-");
                     for (; ; )
                     {
                         //read user command
