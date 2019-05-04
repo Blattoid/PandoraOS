@@ -94,9 +94,6 @@ namespace Pandora
                             x++;
                         }
 
-                        Console.SetCursorPosition(0, 0);
-                        Console.Write(x + ", " + y + " ");
-
                         //loop cursor if it goes past the screen edge
                         if (y > Console.WindowHeight - 1) y = 0;
                         if (x < 0)
