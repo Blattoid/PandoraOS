@@ -125,7 +125,7 @@
       <Optimize>true</Optimize>
       <DefineConstants>DEBUG;TRACE</DefineConstants>
       <PlatformTarget>AnyCPU</PlatformTarget>
-      <DebugEnabled>True</DebugEnabled>
+      <DebugEnabled>False</DebugEnabled>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">

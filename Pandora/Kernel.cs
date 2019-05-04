@@ -18,9 +18,7 @@ namespace Pandora
             Success("Kernel execution started.");
 
             //cute startup beep tune :)
-            Sys.PCSpeaker.Beep(600, 200);
-            Sys.PCSpeaker.Beep(800, 200);
-            Sys.PCSpeaker.Beep(1000, 200);
+			for (uint i = 600; i <= 1000; i += 200) Sys.PCSpeaker.Beep(i, 200);
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Screen res is " + Console.WindowWidth + "x" + Console.WindowHeight + ".");
