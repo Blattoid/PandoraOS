@@ -118,10 +118,7 @@ namespace Pandora
 
                     //display warning about possible data corruption
                     Error("-=!!WARNING!!=-\nThe CosmosOS FAT driver is still in experimental stages.\nPROCEEDING MAY CAUSE A LOSS OF DATA!");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("Initialise anyway? y/N ");
-                    //reset colour
-                    Console.ResetColor();
+                    Warning("Initialise anyway? y/N ", false);
 
                     //read user input
                     if (!(Console.ReadKey().Key == ConsoleKey.Y))
@@ -149,13 +146,12 @@ namespace Pandora
                 {
                     if (!IsVFSInit) { Error("VFS not initialised!"); return; } //refuse to proceed if the VFS has not been initialised
 
-                    string filename;
                     List<string> filecontent = new List<string>();
                     Console.WriteLine("-=File Editor=-");
                     for (; ; )
                     {
                         //read user command
-                        Console.Write(":"); //command prefix
+                        Console.Write("EDIT:"); //command prefix
                         input = Console.ReadLine().Split(" "); //split by spaces
                         command = input[0].ToLower(); //grab lowercase of command
 
@@ -164,24 +160,17 @@ namespace Pandora
                             foreach (string[] line in new string[][]
                                 {
                                     new string[] {"help","Displays this help." },
-                                    new string[] {"set_filename <filename>","Sets the filename to write to." },
                                     new string[] {"load <filename>","Loads a file from disk." },
                                     new string[] {"" },
                                     new string[] {"line <line no>","Sets the text on a given line to some text." },
-                                    new string[] {"list [line no]","Lists the contents of either the whole file or a specific line." },
+                                    new string[] {"list [line no]","Lists the contents of either the whole file" },
+                                    new string[] {"", "or a specific line."},
+                                    new string[] {"count", "Counts the number of lines in the file."},
                                     new string[] {"" },
-                                    new string[] {"save","Saves the file to disk and exits." },
-                                    new string[] {"discard","Exit without saving." }
+                                    new string[] {"save <filename>","Saves the file to disk." },
+                                    new string[] {"discard / exit","Exit without saving." }
                                 }
                             ) OutputHelpText(line);
-                        }
-                        else if (command == "set_filename")
-                        {
-                            if (input.Length > 1)
-                            {
-                                filename = input[1];
-                                Success(string.Format("Set filename to '{0}'", filename));
-                            }
                         }
                         else if (command == "load")
                         {
@@ -195,8 +184,7 @@ namespace Pandora
                             //check if we are about to overwrite any unsaved work
                             if (filecontent.Count > 0)
                             {
-                                Console.Write("You are about to discard your unsaved work.\nProceed? y/N ");
-                                Console.ResetColor();
+                                Warning("You are about to discard your unsaved work.\nProceed? y/N ", false);
 
                                 //read user input
                                 if (!(Console.ReadKey().Key == ConsoleKey.Y))
@@ -209,8 +197,9 @@ namespace Pandora
                             if (File.Exists(input[1]))
                             {
                                 Console.WriteLine("Loading file...");
+                                string filename = input[1]; //update the filename
                                 filecontent.Clear(); //clear any content that might already be in the buffer.
-                                foreach (string line in File.ReadAllLines(input[1])) filecontent.Add(line); //add all the lines
+                                foreach (string line in File.ReadAllLines(filename)) filecontent.Add(line); //add all the lines
                                 Success(string.Format("Loaded {0} lines!", filecontent.Count));
                             }
                             else
@@ -292,8 +281,49 @@ namespace Pandora
                                 foreach (string line in filecontent) Console.WriteLine(line);
                             }
                         }
+                        else if (command == "count")
+                        {
+                            uint i = 0;
+                            foreach (string line in filecontent) i += (uint)line.Length;
+                            Console.WriteLine(string.Format("{0} lines, with {1} characters.", filecontent.Count, i));
+                        }
 
-                        else if (command == "discard") break; //exit the loop
+                        else if (command == "save")
+                        {
+                            if (input.Length > 1)
+                            {
+                                //user has specifed a filename, check if it already exists.
+                                string filename = input[1];
+                                if (File.Exists(filename))
+                                {
+                                    Warning(string.Format("You are about to overwrite {0}\nDo you want to overwrite? y/N ", filename), false);
+
+                                    //read user input
+                                    if (!(Console.ReadKey().Key == ConsoleKey.Y))
+                                    {
+                                        Console.WriteLine("\nAborted.");
+                                        continue;
+                                    }
+
+                                    File.Delete(filename); //delete the file 
+                                }
+                                
+                                //write all data to the file
+                                int totalsize =  filecontent.Count;
+                                int i = 1;
+                                while (filecontent.Count > 0)
+                                {
+                                    //'pop' line from the top of filecontent
+                                    string line = filecontent[0];
+                                    filecontent.RemoveAt(0);
+                                    //write the line
+                                    Console.Write(string.Format("\r{0}/{1} {2}%   ", i, totalsize, i/totalsize*100)); //output progress and percentage
+                                    i++;
+                                }
+                                Success("\nSaved!");
+                            }
+                        }
+                        else if (command == "discard" || command == "exit") break; //exit the loop
                         else Error("Unknown command. Type 'help' for a list of editor commands.");
                     }
                 }
@@ -306,22 +336,26 @@ namespace Pandora
         }
 
         //colour-coded message printing
-        void Error(string mesg)
+        void Error(string mesg, bool newline = true)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(mesg);
+            if (newline) Console.WriteLine(mesg);
+            else Console.Write(mesg);
             Console.ResetColor();
         }
-        void Warning(string mesg)
+        void Warning(string mesg, bool newline = true)
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine(mesg);
+            if (newline) Console.WriteLine(mesg);
+            else Console.Write(mesg);
+
             Console.ResetColor();
         }
-        void Success(string mesg)
+        void Success(string mesg, bool newline = true)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine(mesg);
+            if (newline) Console.WriteLine(mesg);
+            else Console.Write(mesg);
             Console.ResetColor();
         }
 
