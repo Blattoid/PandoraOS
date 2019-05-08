@@ -1,5 +1,7 @@
 ﻿using System;
 using Sys = Cosmos.System;
+using Pandora.Applets;
+using Pandora.Functions;
 
 namespace Pandora
 {
@@ -9,13 +11,14 @@ namespace Pandora
         public static bool IsVFSInit = false; //Has the VFS been initialised? (needed for any disk access functions)
         public static Sys.FileSystem.CosmosVFS filesys;
 
-        //These classes contain functions and applets that we need/execute.
-        //An 'Applet' is a command that can be run from the main menu.
+        //These classes contain functions that we need.
         MissingFunctions missingfunctions;
         HelperFunctions func;
-        Applets.FileUtils Applets_Files;
-        Applets.Misc Applets_Misc; 
- 
+        //An 'Applet' is a command that can be run from the main menu.
+        //Applets are sorted in their namespace by a class categorising their general purpose.
+        FileUtils FileUtils;
+        Misc Misc;
+
         protected override void BeforeRun()
         {
             //at this point, our code is executing. print a message to inform the user of this.
@@ -32,15 +35,15 @@ namespace Pandora
             Console.WriteLine("Loaded 'MissingFunctions'.");
             //////////////////////////
             for (uint i = 0; i <= 10000000; i += 1) { } //false delay
-            func =  new HelperFunctions();
+            func = new HelperFunctions();
             Console.WriteLine("Loaded 'HelperFunctions'.");
             //////////////////////////
             for (uint i = 0; i <= 50000000; i += 1) { } //false delay
-            Applets_Files = new Applets.FileUtils();
+            FileUtils = new FileUtils();
             Console.WriteLine("Loaded 'Applets.FileUtils'.");
             //////////////////////////
             for (uint i = 0; i <= 20000000; i += 1) { } //false delay
-            Applets_Misc = new Applets.Misc();
+            Misc = new Misc();
             Console.WriteLine("Loaded 'Applets.Misc'.");
 
             Console.ResetColor();
@@ -80,22 +83,22 @@ namespace Pandora
                         }
                     ) func.OutputHelpText(line);
                 }
-                else if (command == "memopad") Applets_Misc.Memopad();
+                else if (command == "memopad") Misc.Memopad();
 
-                else if (command == "init_vfs" || command == "!") Applets_Files.InitVFS();
-                else if (command == "list" || command == "ls") Applets_Files.List(input);
-                else if (command == "move" || command == "rename") Applets_Files.Move(input);
-                else if (command == "delete" || command == "del") Applets_Files.Delete(input);
-                else if (command == "copy" || command == "cp") Applets_Files.Copy(input);
-                else if (command == "edit") Applets_Files.Edit(input);
-                else if (command == "type" || command == "cat") Applets_Files.Type(input);
-                else if (command == "size" || command == "du") Applets_Files.Size(input);
+                else if (command == "init_vfs" || command == "!") FileUtils.InitVFS();
+                else if (command == "list" || command == "ls") FileUtils.List(input);
+                else if (command == "move" || command == "rename") FileUtils.Move(input);
+                else if (command == "delete" || command == "del") FileUtils.Delete(input);
+                else if (command == "copy" || command == "cp") FileUtils.Copy(input);
+                else if (command == "edit") FileUtils.Edit(input);
+                else if (command == "type" || command == "cat") FileUtils.Type(input);
+                else if (command == "size" || command == "du") FileUtils.Size(input);
 
                 else if (command == "reboot") Sys.Power.Reboot();
                 else if (command == "shutdown") Sys.Power.Shutdown();
                 else func.Error("Unknown command. Type 'help' for a list of commands.");
             }
-            catch (Exception err) { Console.WriteLine(err.Message); } //{ func.Error(err.Message); }
+            catch (Exception err) { func.Error(err.Message); }
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pandora
+namespace Pandora.Functions
 {
     class HelperFunctions
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Pandora
+namespace Pandora.Functions
 {
     //I've noticed that some things have not been implemented in Cosmos that I need, so these are some workarounds for those problems.
     class MissingFunctions
