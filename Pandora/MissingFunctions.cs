@@ -2,10 +2,10 @@
 
 namespace Pandora
 {
-    //I've noticed that some things have not been implemented in Cosmos that I need, so these are workarounds for the problem.
+    //I've noticed that some things have not been implemented in Cosmos that I need, so these are some workarounds for those problems.
     class MissingFunctions
     {
-        //Convert.ToInt32 doesn't work, so I have to implement it myself in such a way that it does work. It will not be efficient.
+        //Convert.ToInt32 doesn't work, so I have to implement it myself in such a way that it does work. It will not be pretty.
         public int ConvertToInt(string input)
         {
             Int32 output = 0;
@@ -51,6 +51,7 @@ namespace Pandora
                 multiplier *= 10;
             }
             return output;
+            
         }
 
         //Because System.Linq isn't supported, Enumerable.Repeat also doesn't exist.
