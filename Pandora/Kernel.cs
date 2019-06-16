@@ -7,7 +7,7 @@ namespace Pandora
 {
     public class Kernel : Sys.Kernel
     {
-        public const double SYS_VERSION = 0.33;
+        public const double SYS_VERSION = 0.34;
         public static bool IsVFSInit = false; //Has the VFS been initialised? (needed for any disk access functions)
         public static Sys.FileSystem.CosmosVFS filesys;
 
@@ -48,8 +48,7 @@ namespace Pandora
 
             Console.ResetColor();
 
-            //func.Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
-            Console.WriteLine(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
+            func.Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
         }
 
         protected override void Run()
@@ -58,7 +57,7 @@ namespace Pandora
             {
                 //read user command
                 Console.Write(">"); //line prefix
-                string[] input = Console.ReadLine().Split(" "); //split by spaces
+                string[] input = func.SeparateStringIntoArguments(Console.ReadLine()); //split by spaces
                 string command = input[0].ToLower(); //grab lowercase of command
 
                 if (command == "help")

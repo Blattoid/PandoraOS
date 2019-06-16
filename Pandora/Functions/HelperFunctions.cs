@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Pandora.Functions
 {
@@ -28,6 +29,45 @@ namespace Pandora.Functions
             if (newline) Console.WriteLine(mesg);
             else Console.Write(mesg);
             Console.ResetColor();
+        }
+
+        /// <summary>Given a string, separate it into an array of arguments.</summary>
+        /// <param name="text">The input text to parse.</param>
+        /// <param name="delimiter">The character to split the string by, usually whitespace.</param>
+        public string[] SeparateStringIntoArguments(string text, char delimiter = ' ')
+        {
+            List<string> arguments = new List<string>();
+            int cursor_pos = 0; //stores where we are in the string
+            string current_arg = ""; //hold the current argument being worked on
+            bool escape_char = false;
+
+            foreach (char character in text) //iterate over every character in text
+            {
+                if (character == '\\' && !escape_char) //do we need to escape the next character AND we aren't supposed to escape this one?
+                {
+                    //yes, set the flag and move onto the next character.
+                    escape_char = true;
+                    continue;
+                }
+
+                if (character == delimiter && !escape_char) //is this character a match against our delimiter AND we aren't supposed to escape this one?
+                {
+                    if (current_arg.Length == 0) continue; //if we do not have an argument to add, do not proceed.
+                    arguments.Add(current_arg);
+                    cursor_pos += current_arg.Length; //put the 'cursor' at where our argument ends in the text
+                    current_arg = "";
+                }
+                else current_arg += character; //add the character to the current argument.
+
+                escape_char = false; //we no longer need to escape a character.
+            }
+            arguments.Add(current_arg); //add the last argument to the list
+
+            //copy the arguments to a string array, since those are more stable in COSMOS.
+            string[] args = new string[arguments.Count];
+            for (int i = 0; i < arguments.Count; i++) args[i] = arguments[i];
+            foreach (string arg in args) { Console.WriteLine("\t" + arg); } //debug output
+            return args;
         }
 
         //equivalent of 'less' in unix
