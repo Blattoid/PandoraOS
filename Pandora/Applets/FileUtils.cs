@@ -10,7 +10,7 @@ namespace Pandora.Applets
     {
         private HelperFunctions func = new HelperFunctions();
 
-        public void InitVFS()
+        public void InitVFS(string[] argv)
         {
             if (Kernel.IsVFSInit)
             {

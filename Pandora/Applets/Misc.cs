@@ -1,10 +1,20 @@
 ﻿using System;
+using Pandora.Functions;
 
 namespace Pandora.Applets
 {
     class Misc
     {
-        public void Memopad()
+        HelperFunctions func = new HelperFunctions();
+
+        public void Help(string[] argv)
+        {
+            foreach (AppletIndex.App app in Kernel.appletIndex.GenAppletIndex())
+            {
+                func.OutputHelpText(new string[] { app.HelpTitle, app.HelpDescription });
+            }
+        }
+        public void Memopad(string[] argv)
         {
             ConsoleKeyInfo key; //key pressed
 
