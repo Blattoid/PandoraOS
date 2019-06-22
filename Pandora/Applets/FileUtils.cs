@@ -10,30 +10,6 @@ namespace Pandora.Applets
     {
         private HelperFunctions func = new HelperFunctions();
 
-        public void InitVFS(string[] argv)
-        {
-            if (Kernel.IsVFSInit)
-            {
-                func.Error("VFS is already initialised. Reboot if you want to unload it.");
-                return;
-            }
-
-            //display func.func.Warning about possible data corruption
-            func.Error("-=!!Warning!!=-\nThe CosmosOS FAT driver is still in experimental stages.\nPROCEEDING MAY CAUSE A LOSS OF DATA!");
-            func.Warning("Initialise anyway? y/N ", false);
-
-            //read user input
-            if (!(Console.ReadKey().Key == ConsoleKey.Y))
-            {
-                Console.WriteLine("\nAborted.");
-                return;
-            }
-
-            Kernel.filesys = new Sys.FileSystem.CosmosVFS();
-            Sys.FileSystem.VFS.VFSManager.RegisterVFS(Kernel.filesys);
-            func.Success("Initialised VFS.");
-            Kernel.IsVFSInit = true;
-        }
         public void List(string[] maincommand)
         {
             if (!Kernel.IsVFSInit) //refuse to proceed if the VFS has not been initialised
@@ -422,7 +398,6 @@ namespace Pandora.Applets
             }
             Console.WriteLine(String.Format("{0} lines, {1} characters. ({2} bytes)", lines, chars, new FileInfo(target).Length));
         }
-
 
         private void SaveFile(string filename, List<string> contents)
         {

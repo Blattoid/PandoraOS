@@ -30,8 +30,13 @@ namespace Pandora
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Screen res is " + Console.WindowWidth + "x" + Console.WindowHeight + ".");
 
-             appletIndex = new AppletIndex();
+            appletIndex = new AppletIndex();
             Console.WriteLine("Loaded App Register.");
+
+            filesys = new Sys.FileSystem.CosmosVFS();
+            Sys.FileSystem.VFS.VFSManager.RegisterVFS(filesys);
+            Console.WriteLine("Initialised VFS.");
+            IsVFSInit = true;
 
             func.Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
         }
@@ -57,10 +62,9 @@ namespace Pandora
                         app.AppCode_Delegate(input);
                     }
                 }
-
                 if (!executed) func.Error("Unknown command. Type 'help' for a list of commands.");
             }
-            catch (Exception err) { func.Error("System Error: "+err.Message); }
+            catch (Exception err) { func.Error("System Error: " + err.Message); }
         }
     }
 }

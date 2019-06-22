@@ -28,12 +28,7 @@ namespace Pandora.Applets
                     HelpDescription = "Allows you to write anywhere on the screen.",
                     AppCode_Delegate = misc.Memopad
                 },
-                new App {
-                    CommandInvokers = new string[] { "init_vfs", "!"},
-                    HelpTitle = "init_vfs",
-                    HelpDescription = "Initialises the Virtual Filesystem Manager.",
-                    AppCode_Delegate = fileUtils.InitVFS
-                },
+
                 new App {
                     CommandInvokers = new string[] { "list", "ls"},
                     HelpTitle = "list",
