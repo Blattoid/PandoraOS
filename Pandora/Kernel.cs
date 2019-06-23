@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Sys = Cosmos.System;
 using Pandora.Applets;
 using Pandora.Functions;
