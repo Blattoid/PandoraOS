@@ -35,7 +35,7 @@ namespace Pandora.Applets
                 buffer.Add(line);
             }
 
-            int[] cursor_pos = new int[2] { 0, 0 }; //y, x
+            int[] cursor_pos = new int[2] { 1, 0 }; //y, x
 
             //Console.WriteLine("buffer initialised.");
             //Console.WriteLine("y:"+buffer.Count+" x:"+buffer[0].Count);
@@ -61,7 +61,8 @@ namespace Pandora.Applets
                 //bool SHIFT = false;
                 //if ((key.Modifiers & ConsoleModifiers.Shift) != 0) SHIFT = true;
 
-                if (ALT && key.KeyChar == 'c') return; //exit program
+                if (ALT && key.KeyChar == 'c') break; //exit program
+
                 else if (key.Key == ConsoleKey.Backspace) //backspace implementation
                 {
                     cursor_pos[1]--; //decrement x axis
@@ -132,6 +133,7 @@ namespace Pandora.Applets
                     }
                 }
             }
+            Console.WriteLine(); //write a new line on applet exit.
         }
     }
 }
