@@ -1,4 +1,7 @@
-﻿using System;
+﻿//#define STARTUP_BEEPS
+#define AUTOLOAD_VFS
+
+using System;
 using Sys = Cosmos.System;
 using Pandora.Applets;
 using Pandora.Functions;
@@ -9,7 +12,7 @@ namespace Pandora
     {
         public const double SYS_VERSION = 0.4;
         public static bool IsVFSInit = false; //Has the VFS been initialised? (needed for any disk access functions)
-        public static Sys.FileSystem.CosmosVFS filesys;
+        public static Sys.FileSystem.CosmosVFS vfs;
 
         //These classes contain functions that we need.
         MissingFunctions missingfunctions = new MissingFunctions();
@@ -24,7 +27,9 @@ namespace Pandora
             func.Success("Kernel execution started.");
 
             //cute startup beep tune :)
+#if (STARTUP_BEEPS)
             for (uint i = 600; i <= 1000; i += 200) Sys.PCSpeaker.Beep(i, 200);
+#endif
 
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("Screen res is " + Console.WindowWidth + "x" + Console.WindowHeight + ".");
@@ -32,10 +37,12 @@ namespace Pandora
             appletIndex = new AppletIndex();
             Console.WriteLine("Loaded App Register.");
 
-            filesys = new Sys.FileSystem.CosmosVFS();
-            Sys.FileSystem.VFS.VFSManager.RegisterVFS(filesys);
+#if (AUTOLOAD_VFS)
+            vfs = new Sys.FileSystem.CosmosVFS();
+            Sys.FileSystem.VFS.VFSManager.RegisterVFS(vfs);
             Console.WriteLine("Initialised VFS.");
             IsVFSInit = true;
+#endif
 
             func.Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
         }
@@ -49,7 +56,6 @@ namespace Pandora
                 string text = Console.ReadLine();
                 string[] input = func.SeparateStringIntoArguments(text); //split by spaces
                 string command = input[0].ToLower(); //grab lowercase of command
-
 
                 //search each app in the index to see if we need to execute it
                 bool executed = false;

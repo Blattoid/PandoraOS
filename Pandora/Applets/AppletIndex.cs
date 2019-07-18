@@ -1,5 +1,4 @@
-﻿using System;
-using Pandora.Functions;
+﻿using Pandora.Functions;
 
 namespace Pandora.Applets
 {
@@ -9,6 +8,7 @@ namespace Pandora.Applets
 
         private Misc misc = new Misc();
         FileUtils fileUtils = new FileUtils();
+        PowerManager power = new PowerManager();
 
         public App[] GenAppletIndex() //public app index to reference any app in the system
         {
@@ -29,6 +29,12 @@ namespace Pandora.Applets
                     AppCode_Delegate = misc.Memopad
                 },
 
+                new App {
+                    CommandInvokers = new string[] { "part" },
+                    HelpTitle = "part",
+                    HelpDescription = "Disk partitioner",
+                    AppCode_Delegate = fileUtils.Partition
+                },
                 new App {
                     CommandInvokers = new string[] { "list", "ls"},
                     HelpTitle = "list",
@@ -76,7 +82,21 @@ namespace Pandora.Applets
                     HelpTitle = "size <file>",
                     HelpDescription = "Outputs the size of a file.",
                     AppCode_Delegate = fileUtils.Size
+                },
+
+                new App {
+                    CommandInvokers = new string[] { "reboot"},
+                    HelpTitle = "reboot",
+                    HelpDescription = "Reboots the computer.",
+                    AppCode_Delegate = power.Reboot
+                },
+                new App {
+                    CommandInvokers = new string[] { "shutdown"},
+                    HelpTitle = "shutdown",
+                    HelpDescription = "Shuts down the computer.",
+                    AppCode_Delegate = power.Shutdown
                 }
+
             };
         }
 
@@ -84,7 +104,7 @@ namespace Pandora.Applets
         public class App
         {
             public string[] CommandInvokers { get; set; } = new string[] { "" }; //commands that can reference the app (e.g. 'list' would work the same as 'ls')
-            public AppRuntime AppCode_Delegate { get; set; } = MissingAppletError; //delegate to the function that runs the app code
+            public AppRuntime AppCode_Delegate { get; set; } = MissingAppletError; //delegate to the function that runs the app code. if left undefined it will output an error.
 
             //shown in the 'help' command
             public string HelpTitle { get; set; } = "";

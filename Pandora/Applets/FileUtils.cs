@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Sys = Cosmos.System;
 using Pandora.Functions;
 
 namespace Pandora.Applets
@@ -9,6 +8,56 @@ namespace Pandora.Applets
     class FileUtils
     {
         private HelperFunctions func = new HelperFunctions();
+        private MissingFunctions missingfunc = new MissingFunctions();
+
+        public void Partition(string[] maincommand)
+        {
+            for (; ; )
+            {
+                //read user command
+                Console.Write("PART:"); //command prefix
+                string[] input = func.SeparateStringIntoArguments(Console.ReadLine()); //split by spaces
+                string command = input[0].ToLower(); //grab lowercase of command
+
+                if (command == "help")
+                {
+                    foreach (string[] line in new string[][]
+                        {
+                                    new string[] {"help","Displays this help." },
+                                    new string[] {"list / l","List logical disks" },
+                                    new string[] {""},
+                                    new string[] {"exit / e","Exit partition manager." }
+                        }
+                    ) func.OutputHelpText(line);
+                }
+                else if (command == "list" || command == "l")
+                {
+                    Console.WriteLine("DEBUG: Started list.");
+                    foreach (var x in Kernel.vfs.GetVolumes())
+                    {
+                        string name = x.mFullPath; //get drive id
+                        if (x.mName != name) name += string.Format(" ({0})", x.mName); //if the partition has a label, display it.
+
+                        long free = Kernel.vfs.GetTotalFreeSpace(x.mFullPath); //get unused space
+                        long total = Kernel.vfs.GetTotalSize(x.mFullPath); //get total partition size
+                        string percent = ((double)(free / total * 100)).ToString(); //calculate the percentage of space used
+
+                        //output data
+                        Console.WriteLine(string.Format("{0}{1}{2} {3}%", name, missingfunc.EnumerableRepeat(" ", 30 - name.Length), x.mSize, percent));
+                    }
+                }
+                else if (command == "idk")
+                {
+                    foreach (var x in Cosmos.HAL.Drivers.PCI.Network.AMDPCNetII.Devices)
+                    {
+                        Console.WriteLine(x.Name+":"+x.MACAddress+":"+x.CardType);
+                    }
+                    
+                }
+                else if (command == "exit" || command == "e") { break; }
+                else func.Error("Unknown partition command. Type 'help' for a list of commands.");
+            }
+        }
 
         public void List(string[] maincommand)
         {
@@ -44,7 +93,7 @@ namespace Pandora.Applets
             Console.ResetColor();
 
             Console.WriteLine(string.Format("{0} file(s) totalling {1} bytes.\n{2} folder(s). {3} bytes free total.",
-                filecount,filebytes, foldercount, Kernel.filesys.GetAvailableFreeSpace("0"))); //use drive id 0 since idk how to select a drive id based on the directory.
+                filecount,filebytes, foldercount, Kernel.vfs.GetAvailableFreeSpace("0"))); //use drive id 0 since idk how to select a drive id based on the directory.
         }
         public void Move(string[] maincommand)
         {
@@ -182,7 +231,7 @@ namespace Pandora.Applets
             {
                 //read user command
                 Console.Write("EDIT:"); //command prefix
-                string[] input = Console.ReadLine().Split(" "); //split by spaces
+                string[] input = func.SeparateStringIntoArguments(Console.ReadLine()); //split by spaces
                 string command = input[0].ToLower(); //grab lowercase of command
 
                 if (command == "help")
