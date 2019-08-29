@@ -124,7 +124,7 @@
       <CosmosDebugPort>Serial: COM1</CosmosDebugPort>
       <Optimize>true</Optimize>
       <DefineConstants>TRACE;DEBUG</DefineConstants>
-      <PlatformTarget>AnyCPU</PlatformTarget>
+      <PlatformTarget>x86</PlatformTarget>
       <DebugEnabled>False</DebugEnabled>
       <DebugCom>1</DebugCom>
     </PropertyGroup>

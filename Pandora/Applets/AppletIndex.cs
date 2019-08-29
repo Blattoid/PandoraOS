@@ -8,6 +8,7 @@ namespace Pandora.Applets
 
         private Misc misc = new Misc();
         FileUtils fileUtils = new FileUtils();
+        SVGAGraphics svga = new SVGAGraphics();
         PowerManager power = new PowerManager();
 
         public App[] GenAppletIndex() //public app index to reference any app in the system
@@ -29,13 +30,7 @@ namespace Pandora.Applets
                     AppCode_Delegate = misc.Memopad
                 },
 
-                new App {
-                    CommandInvokers = new string[] { "part" },
-                    HelpTitle = "part",
-                    HelpDescription = "Disk partitioner",
-                    AppCode_Delegate = fileUtils.Partition
-                },
-                new App {
+                                new App {
                     CommandInvokers = new string[] { "list", "ls"},
                     HelpTitle = "list",
                     HelpDescription = "Lists the files in the current directory.",
@@ -82,6 +77,13 @@ namespace Pandora.Applets
                     HelpTitle = "size <file>",
                     HelpDescription = "Outputs the size of a file.",
                     AppCode_Delegate = fileUtils.Size
+                },
+
+                new App {
+                    CommandInvokers = new string[] { "test_vga" },
+                    HelpTitle = "test_vga",
+                    HelpDescription = "Tests VGA by blinking a rectangle",
+                    AppCode_Delegate = svga.demo
                 },
 
                 new App {

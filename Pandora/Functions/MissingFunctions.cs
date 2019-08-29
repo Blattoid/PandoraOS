@@ -15,8 +15,7 @@ namespace Pandora.Functions
             int result = 0;
             bool is_negative = false; //is the number negative?
 
-            Console.Write(":");
-            byte[] data = Encoding.ASCII.GetBytes(Console.ReadLine());
+            byte[] data = Encoding.ASCII.GetBytes(input);
             for (int i = data.Length - 1; i >= 0; i--) //loop over the digits in reverse so we process the 1's digit first.
             {
                 int code = (int)data[i]; //convert the byte to an integer.
@@ -50,6 +49,18 @@ namespace Pandora.Functions
                     result += code;
                 }
                 multiplier *= 10; //multiply the multiplier by 10 since we are about to process the next digit.
+            }
+            return result; //done!
+        }
+        //There is no existing function to convert a string to a byte array.
+        public byte[] ConvertToByteArray(string input)
+        {
+            byte[] result = new byte[] { }; //initialise the array
+            int i = 0;
+            //iterate over every character, cast it to a byte and add it to the array
+            foreach (char character in input)
+            {
+                result[i] = (byte)character;
             }
             return result; //done!
         }

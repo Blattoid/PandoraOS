@@ -15,7 +15,6 @@ namespace Pandora
         public static Sys.FileSystem.CosmosVFS vfs;
 
         //These classes contain functions that we need.
-        MissingFunctions missingfunctions = new MissingFunctions();
         HelperFunctions func = new HelperFunctions();
 
         //Applet index instance
@@ -44,7 +43,7 @@ namespace Pandora
             IsVFSInit = true;
 #endif
 
-            func.Success(string.Format("-=PandoraOS V{0} booted successfully=-", SYS_VERSION));
+            func.Success(string.Format("-=PandoraOS V{0} booted successfully=- {1}MB free!", SYS_VERSION, Cosmos.Core.CPU.GetAmountOfRAM()));
         }
 
         protected override void Run()

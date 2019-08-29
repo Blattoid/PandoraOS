@@ -10,56 +10,7 @@ namespace Pandora.Applets
         private HelperFunctions func = new HelperFunctions();
         private MissingFunctions missingfunc = new MissingFunctions();
 
-        public void Partition(string[] maincommand)
-        {
-            for (; ; )
-            {
-                //read user command
-                Console.Write("PART:"); //command prefix
-                string[] input = func.SeparateStringIntoArguments(Console.ReadLine()); //split by spaces
-                string command = input[0].ToLower(); //grab lowercase of command
-
-                if (command == "help")
-                {
-                    foreach (string[] line in new string[][]
-                        {
-                                    new string[] {"help","Displays this help." },
-                                    new string[] {"list / l","List logical disks" },
-                                    new string[] {""},
-                                    new string[] {"exit / e","Exit partition manager." }
-                        }
-                    ) func.OutputHelpText(line);
-                }
-                else if (command == "list" || command == "l")
-                {
-                    Console.WriteLine("DEBUG: Started list.");
-                    foreach (var x in Kernel.vfs.GetVolumes())
-                    {
-                        string name = x.mFullPath; //get drive id
-                        if (x.mName != name) name += string.Format(" ({0})", x.mName); //if the partition has a label, display it.
-
-                        long free = Kernel.vfs.GetTotalFreeSpace(x.mFullPath); //get unused space
-                        long total = Kernel.vfs.GetTotalSize(x.mFullPath); //get total partition size
-                        string percent = ((double)(free / total * 100)).ToString(); //calculate the percentage of space used
-
-                        //output data
-                        Console.WriteLine(string.Format("{0}{1}{2} {3}%", name, missingfunc.EnumerableRepeat(" ", 30 - name.Length), x.mSize, percent));
-                    }
-                }
-                else if (command == "idk")
-                {
-                    foreach (var x in Cosmos.HAL.Drivers.PCI.Network.AMDPCNetII.Devices)
-                    {
-                        Console.WriteLine(x.Name+":"+x.MACAddress+":"+x.CardType);
-                    }
-                    
-                }
-                else if (command == "exit" || command == "e") { break; }
-                else func.Error("Unknown partition command. Type 'help' for a list of commands.");
-            }
-        }
-
-        public void List(string[] maincommand)
+              public void List(string[] maincommand)
         {
             if (!Kernel.IsVFSInit) //refuse to proceed if the VFS has not been initialised
             {
@@ -244,6 +195,7 @@ namespace Pandora.Applets
                                     new string[] {"line <line no>","Sets the text on a given line to some text." },
                                     new string[] {"list [line no]","Lists the contents of either the whole file" },
                                     new string[] {"", "or a specific line."},
+                                    new string[] {"exec", "If the file is a script, run it."},
                                     new string[] {"count", "Counts the number of lines in the file."},
                                     new string[] {"" },
                                     new string[] {"save <filename>","Saves the file to disk." },
@@ -359,6 +311,18 @@ namespace Pandora.Applets
                         //Simply output every single line, lmao
                         foreach (string line in filecontents) Console.WriteLine(line);
                     }
+                }
+                else if (command == "exec")
+                {
+                    if (filecontents.Count > 0)
+                    {
+                        if (filecontents[0].ToUpper().StartsWith("#!SCRIPT"))
+                        {
+                            PandoraScript script = new PandoraScript();
+                            script.RunFromArray(filecontents);
+                        }
+                    }
+                    else { func.Error("File has no contents."); }
                 }
                 else if (command == "count")
                 {
